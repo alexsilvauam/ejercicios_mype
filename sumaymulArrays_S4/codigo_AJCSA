@@ -5,7 +5,7 @@ public class Program
         int i;
         int nElementosArray;
         int opcion;
-        
+
         Console.WriteLine("@=================================================================@");
         Console.WriteLine(" Bienvenido a la calculadora de suma y multiplicación de arreglos. ");
         Console.WriteLine("@=================================================================@");
@@ -20,38 +20,41 @@ public class Program
 
         Console.Clear();
 
+        // Bifurcación según la opción seleccionada
         switch (opcion)
         {
             case 1:
-                { 
+                {
                     Console.Write("Ingrese la cantidad de indices de los arreglos: ");
                     nElementosArray = int.Parse(Console.ReadLine());
 
-                        int[] arreglo1 = new int[nElementosArray];
-                        int[] arreglo2 = new int[nElementosArray];
+                    int[] arreglo1 = new int[nElementosArray];
+                    int[] arreglo2 = new int[nElementosArray];
 
                     Console.Clear();
                     Console.WriteLine("Ingrese los elementos del primer arreglo: ");
-                        for (i = 0; i < nElementosArray; i++)
-                        {
+                    // Iteración para ingresar elementos del primer arreglo
+                    for (i = 0; i < nElementosArray; i++)
+                    {
                         Console.Write("Elementos [{0}]: ", i + 1);
                         arreglo1[i] = int.Parse(Console.ReadLine());
-                        }
+                    }
 
                     Console.WriteLine();
                     Console.WriteLine("Ingrese los elementos del segundo arreglo: ");
-                        for (i = 0; i < nElementosArray; i++)
-                        {
-                            Console.Write("Elemento [{0}]: ", i + 1);
-                            arreglo2[i] = int.Parse(Console.ReadLine());
-                        }
+                    // Iteración para ingresar elementos del segundo arreglo
+                    for (i = 0; i < nElementosArray; i++)
+                    {
+                        Console.Write("Elemento [{0}]: ", i + 1);
+                        arreglo2[i] = int.Parse(Console.ReadLine());
+                    }
 
                     Console.WriteLine();
                     Console.WriteLine("La suma de los arreglos es: ");
+                    // Iteración para sumar y mostrar los elementos de los arreglos
                     for (i = 0; i < nElementosArray; i++)
                     {
-                    Console.WriteLine("Indice [{0}]: {1} + {2} = {3}", i +1, arreglo1[i], arreglo2[i], arreglo1[i] + arreglo2[i]);
-
+                        Console.WriteLine("Indice [{0}]: {1} + {2} = {3}", i + 1, arreglo1[i], arreglo2[i], arreglo1[i] + arreglo2[i]);
                     }
                     Console.ReadKey();
                     break;
@@ -68,6 +71,7 @@ public class Program
 
                     Console.Clear();
                     Console.WriteLine("Ingrese los elementos del primer arreglo: ");
+                    // Iteración para ingresar elementos del primer arreglo
                     for (i = 0; i < nElementosArray; i++)
                     {
                         Console.Write("Elemento [{0}]: ", i + 1);
@@ -76,6 +80,7 @@ public class Program
 
                     Console.WriteLine();
                     Console.WriteLine("Ingrese los elementos del segundo arreglo: ");
+                    // Iteración para ingresar elementos del segundo arreglo
                     for (i = 0; i < nElementosArray; i++)
                     {
                         Console.Write("Elemento [{0}]: ", i + 1);
@@ -84,20 +89,17 @@ public class Program
 
                     Console.WriteLine();
                     Console.WriteLine("La multiplicación de los arreglos es: ");
+                    // Iteración para multiplicar y mostrar los elementos de los arreglos
                     for (i = 0; i < nElementosArray; i++)
                     {
                         Console.WriteLine("Indice [{0}]: {1} * {2} = {3}", i + 1, arreglo1[i], arreglo2[i], arreglo1[i] * arreglo2[i]);
-
                     }
-                    break;
                     Console.ReadKey();
+                    break;
                 }
-                
+
             default:
                 break;
-
         }
-
     }
 }
-
