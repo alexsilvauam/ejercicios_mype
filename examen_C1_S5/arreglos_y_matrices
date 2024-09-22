@@ -1,0 +1,79 @@
+using System.Diagnostics; // No sé por que Visual Studio me pone eso.
+
+public class Program
+{
+   public static void Main(string[] args)
+   {
+      int n;
+      // Arreglo y matrices
+      string[] Estudiante;
+      double[,] nota;
+      double[] promedio;
+      double mejorNota = 0;
+      string MejorEstu = " ";
+      int CantNotas = 3;
+
+      // Se le pide al usuario ingresar el numero de estudiantes  
+      Console.WriteLine("Introdozca el numero de estudiantes: ");
+      Console.WriteLine("(Minimo 3 estudiantes)");
+      n = int.Parse(Console.ReadLine());
+      Console.Clear();
+
+      //Declarar matrices y arreglos
+      Estudiante = new string[n];
+      nota = new double[n, 3];
+      promedio = new double[n];
+
+      // Iteracion donde se le pide el nombre al estudiante
+      for (int i = 0; i < n; i++)
+      {
+         Console.Write("Ingrese el nombre del estudiante {0}: ", i + 1);
+         Estudiante[i] = Console.ReadLine();
+
+         // Iteración donde se le pide la nota dependiendo de la cantidad de estudiantes
+         for (int j = 0; j < n; j++)
+         {
+            Console.Write("Introduzca la nota ({0}): ", j + 1);
+            nota[i, j] = double.Parse(Console.ReadLine());
+           
+         }
+         Console.Clear();
+
+      }
+      // Calculo de la sumas de las notas
+      for (int i = 0; i < n; i++)
+      {
+         double suma = 0;
+
+         for (int j = 0; j < 3; j++)
+         {
+            suma += nota[i, j];
+
+         }
+         promedio[i] = suma / 3;
+
+      }
+      // Imprimir variables
+      for (int i = 0; i < n; i++) 
+      { 
+         Console.WriteLine("Estudiante: {0}", Estudiante[i]);
+         Console.WriteLine("Promedio: {0} ", promedio[i]);
+         Console.WriteLine("Notas: ({0}) ({1}) ({2})", nota[i, 0], nota[i, 1], nota[i,2]);
+         
+         Console.WriteLine();
+         Console.WriteLine(promedio[i] >= 70 ? "(Aprobado)" : "(Reprobo)");
+         Console.WriteLine();
+      // Calculo del mejor estudiante con la mejor nota   
+         if (promedio[i]>mejorNota)
+         {
+            mejorNota = promedio[i];
+            MejorEstu = Estudiante[i];
+         }
+      }
+      Console.WriteLine("El mejor estudiante es: " + MejorEstu);
+      Console.WriteLine("Con una nota de: " + mejorNota);
+      Console.WriteLine("¡Felicidades!");
+   }
+}
+
+
