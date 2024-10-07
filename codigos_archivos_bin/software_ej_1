@@ -1,0 +1,218 @@
+using System;
+using System.IO;
+
+public struct Software
+{
+    public string Fabricante;
+    public string Nombre;
+    public string Edicion;
+    public string Version;
+    public string Licenciamiento;
+    public string Descripcion;
+}
+
+public class Program
+{
+    static Software[] lista = new Software[100];
+    static int contador = 0;
+
+    static void GuardarEnDisco()
+    {
+        using (FileStream fs = new FileStream("software.dat", FileMode.Create))
+        {
+            using (BinaryWriter writer = new BinaryWriter(fs))
+            {
+                for (int i = 0; i < contador; i++)
+                {
+                    writer.Write(lista[i].Fabricante);
+                    writer.Write(lista[i].Nombre);
+                    writer.Write(lista[i].Edicion);
+                    writer.Write(lista[i].Version);
+                    writer.Write(lista[i].Licenciamiento);
+                    writer.Write(lista[i].Descripcion);
+                }
+            }
+        }
+        Console.WriteLine("Datos almacenados en disco exitosamente.");
+        Console.ReadKey();
+        Console.Clear();
+    }
+
+    public static void RecuperarDeDisco()
+    {
+        if (File.Exists("software.dat"))
+        {
+            using (FileStream fs = new FileStream("software.dat", FileMode.Open))
+            {
+                using (BinaryReader reader = new BinaryReader(fs))
+                {
+                    contador = 0;
+                    while (fs.Position < fs.Length)
+                    {
+                        lista[contador].Fabricante = reader.ReadString();
+                        lista[contador].Nombre = reader.ReadString();
+                        lista[contador].Edicion = reader.ReadString();
+                        lista[contador].Version = reader.ReadString();
+                        lista[contador].Licenciamiento = reader.ReadString();
+                        lista[contador].Descripcion = reader.ReadString();
+                        contador++;
+                    }
+                }
+            }
+            Console.WriteLine("Datos recuperados del disco exitosamente.");
+        }
+        else
+        {
+            Console.WriteLine("No se encontró ningún archivo de datos.");
+        }
+        Console.ReadKey();
+        Console.Clear();
+    }
+
+    public static void AgregarSoftware()
+    {
+        if (contador < lista.Length)
+        {
+            Software software = new Software();
+            Console.Write("Fabricante: ");
+            software.Fabricante = Console.ReadLine();
+            Console.Write("Nombre: ");
+            software.Nombre = Console.ReadLine();
+            Console.Write("Edición: ");
+            software.Edicion = Console.ReadLine();
+            Console.Write("Versión: ");
+            software.Version = Console.ReadLine();
+            Console.Write("Licenciamiento: ");
+            software.Licenciamiento = Console.ReadLine();
+            Console.Write("Descripción: ");
+            software.Descripcion = Console.ReadLine();
+            lista[contador] = software;
+            Console.WriteLine($"El índice de este software es {contador}");
+            contador++;
+        }
+        else
+        {
+            Console.WriteLine("Lista llena");
+        }
+        Console.ReadKey();
+        Console.Clear();
+    }
+
+    public static void MostrarSoftware()
+    {
+        if (contador == 0)
+        {
+            Console.WriteLine("No se encontró ningún índice");
+        }
+        else
+        {
+            for (int i = 0; i < contador; i++)
+            {
+                Console.WriteLine($"Índice: {i}");
+                Console.WriteLine($"Fabricante: {lista[i].Fabricante}");
+                Console.WriteLine($"Nombre: {lista[i].Nombre}");
+                Console.WriteLine($"Edición: {lista[i].Edicion}");
+                Console.WriteLine($"Versión: {lista[i].Version}");
+                Console.WriteLine($"Licenciamiento: {lista[i].Licenciamiento}");
+                Console.WriteLine($"Descripción: {lista[i].Descripcion}");
+                Console.WriteLine("------------------------");
+            }
+        }
+        Console.ReadKey();
+        Console.Clear();
+    }
+
+    public static void ActualizarSoftware()
+    {
+        if (contador == 0)
+        {
+            Console.WriteLine("No se encontró ningún índice");
+        }
+        else
+        {
+            Console.Write("Ingrese el índice del software a actualizar: ");
+            if (int.TryParse(Console.ReadLine(), out int indice) && indice >= 0 && indice < contador)
+            {
+                Console.Write("Fabricante: ");
+                lista[indice].Fabricante = Console.ReadLine();
+                Console.Write("Nombre: ");
+                lista[indice].Nombre = Console.ReadLine();
+                Console.Write("Edición: ");
+                lista[indice].Edicion = Console.ReadLine();
+                Console.Write("Versión: ");
+                lista[indice].Version = Console.ReadLine();
+                Console.Write("Licenciamiento: ");
+                lista[indice].Licenciamiento = Console.ReadLine();
+                Console.Write("Descripción: ");
+                lista[indice].Descripcion = Console.ReadLine();
+            }
+            else
+            {
+                Console.WriteLine("Índice no válido");
+            }
+        }
+        Console.ReadKey();
+        Console.Clear();
+    }
+
+    public static void EliminarSoftware()
+    {
+        if (contador == 0)
+        {
+            Console.WriteLine("No se encontró ningún índice");
+        }
+        else
+        {
+            Console.Write("Ingrese el índice del software a eliminar: ");
+            if (int.TryParse(Console.ReadLine(), out int indice) && indice >= 0 && indice < contador)
+            {
+                for (int i = indice; i < contador - 1; i++)
+                {
+                    lista[i] = lista[i + 1];
+                }
+                contador--;
+            }
+            else
+            {
+                Console.WriteLine("Índice no válido");
+            }
+        }
+        Console.ReadKey();
+        Console.Clear();
+    }
+
+    public static void Main()
+    {
+        int opcion;
+        do
+        {
+            Console.Clear();
+            Console.WriteLine("Menu de Software");
+            Console.WriteLine("1. Agregar software");
+            Console.WriteLine("2. Mostrar software");
+            Console.WriteLine("3. Actualizar software");
+            Console.WriteLine("4. Eliminar software");
+            Console.WriteLine("5. Guardar en disco");
+            Console.WriteLine("6. Recuperar del disco");
+            Console.Write("Opción: ");
+            if (int.TryParse(Console.ReadLine(), out opcion))
+            {
+                Console.Clear();
+                switch (opcion)
+                {
+                    case 1: AgregarSoftware(); break;
+                    case 2: MostrarSoftware(); break;
+                    case 3: ActualizarSoftware(); break;
+                    case 4: EliminarSoftware(); break;
+                    case 5: GuardarEnDisco(); break;
+                    case 6: RecuperarDeDisco(); break;
+                    default: Console.WriteLine("Opción no válida"); break;
+                }
+            }
+            else
+            {
+                Console.WriteLine("Opción no válida");
+            }
+        } while (true);
+    }
+}
