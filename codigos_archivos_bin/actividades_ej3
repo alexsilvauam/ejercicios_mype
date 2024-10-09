@@ -1,0 +1,162 @@
+using System;
+using System.Collections.Generic;
+using System.Linq;
+
+public class ProductoEsperado
+{
+    public string Nombre { get; set; }
+    public string Descripcion { get; set; }
+}
+
+public class Actividad
+{
+    public int Id { get; set; }
+    public string Nombre { get; set; }
+    public string Estado { get; set; } // "Pendiente", "En Progreso", "Completado"
+    public string Responsable { get; set; }
+    public List<ProductoEsperado> Productos { get; set; } = new List<ProductoEsperado>();
+}
+
+public class Fase
+{
+    public string Nombre { get; set; }
+    public List<Actividad> Actividades { get; set; } = new List<Actividad>();
+}
+public class KanbanService
+{
+    private List<Fase> Fases { get; set; } = new List<Fase>();
+
+    public KanbanService()
+    {
+        // Inicializamos con algunas fases predefinidas
+        Fases.Add(new Fase { Nombre = "Analisis" });
+        Fases.Add(new Fase { Nombre = "Diseno" });
+        Fases.Add(new Fase { Nombre = "Implementacion" });
+        Fases.Add(new Fase { Nombre = "Pruebas" });
+        Fases.Add(new Fase { Nombre = "Mantenimiento" });
+    }
+
+    public void CrearActividad(string faseNombre, string nombreActividad, string responsable)
+    {
+        var fase = Fases.FirstOrDefault(f => f.Nombre == faseNombre);
+        if (fase != null)
+        {
+            var actividad = new Actividad
+            {
+                Id = fase.Actividades.Count + 1,
+                Nombre = nombreActividad,
+                Estado = "Pendiente",
+                Responsable = responsable
+            };
+            fase.Actividades.Add(actividad);
+        }
+        else
+        {
+            Console.WriteLine($"Fase '{faseNombre}' no encontrada.");
+        }
+    }
+
+    public void MoverActividad(string faseNombre, int actividadId, string nuevoEstado)
+    {
+        var fase = Fases.FirstOrDefault(f => f.Nombre == faseNombre);
+        if (fase != null)
+        {
+            var actividad = fase.Actividades.FirstOrDefault(a => a.Id == actividadId);
+            if (actividad != null)
+            {
+                actividad.Estado = nuevoEstado;
+                Console.WriteLine($"Actividad '{actividad.Nombre}' movida a '{nuevoEstado}'");
+            }
+            else
+            {
+                Console.WriteLine("Actividad no encontrada.");
+            }
+        }
+        else
+        {
+            Console.WriteLine($"Fase '{faseNombre}' no encontrada.");
+        }
+    }
+
+    public void MostrarTablero()
+    {
+        foreach (var fase in Fases)
+        {
+            Console.WriteLine($"\n--- Fase: {fase.Nombre} ---");
+            foreach (var actividad in fase.Actividades)
+            {
+                Console.WriteLine($"[{actividad.Estado}] Actividad: {actividad.Nombre}, Responsable: {actividad.Responsable}");
+            }
+        }
+    }
+}
+class Program
+{
+    static void Main(string[] args)
+    {
+        KanbanService kanban = new KanbanService();
+        int opcion;
+
+        do
+        {
+            Console.WriteLine("\n--- Menu Kanban ---");
+            Console.WriteLine("1. Crear Actividad");
+            Console.WriteLine("2. Mover Actividad");
+            Console.WriteLine("3. Mostrar Tablero Kanban");
+            Console.WriteLine("4. Salir");
+            Console.Write("Seleccione una opcion: ");
+            opcion = int.Parse(Console.ReadLine());
+
+            switch (opcion)
+            {
+                case 1:
+                    CrearActividad(kanban);
+                    break;
+
+                case 2:
+                    MoverActividad(kanban);
+                    break;
+
+                case 3:
+                    kanban.MostrarTablero();
+                    break;
+
+                case 4:
+                    Console.WriteLine("Saliendo...");
+                    break;
+
+                default:
+                    Console.WriteLine("Opcion no valida");
+                    break;
+            }
+        } while (opcion != 4);
+    }
+
+    static void CrearActividad(KanbanService kanban)
+    {
+        Console.WriteLine("Ingrese el nombre de la fase (Analisis, Diseno, Implementacion, Pruebas, Mantenimiento):");
+        string faseNombre = Console.ReadLine();
+
+        Console.WriteLine("Ingrese el nombre de la actividad:");
+        string nombreActividad = Console.ReadLine();
+
+        Console.WriteLine("Ingrese el responsable de la actividad:");
+        string responsable = Console.ReadLine();
+
+        kanban.CrearActividad(faseNombre, nombreActividad, responsable);
+    }
+
+    static void MoverActividad(KanbanService kanban)
+    {
+        Console.WriteLine("Ingrese el nombre de la fase donde esta la actividad:");
+        string faseNombre = Console.ReadLine();
+
+        Console.WriteLine("Ingrese el ID de la actividad que desea mover:");
+        int actividadId = int.Parse(Console.ReadLine());
+
+        Console.WriteLine("Ingrese el nuevo estado (Pendiente, En Progreso, Completado):");
+        string nuevoEstado = Console.ReadLine();
+
+        kanban.MoverActividad(faseNombre, actividadId, nuevoEstado);
+    }
+}
