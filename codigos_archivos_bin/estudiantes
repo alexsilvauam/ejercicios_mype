@@ -1,0 +1,405 @@
+using System;
+using System.IO;
+using System.Security.Cryptography.X509Certificates;
+
+namespace Grades;
+
+    public struct student
+    {
+        public string Name;
+        public int Cif;
+        public int Age;
+
+        public student(string name, int cif, int age)
+        {
+            Name = name;
+            Cif = cif;
+            Age = age;
+        }
+
+        public struct subject
+        {
+            public string Name;
+            public string Teacher;
+
+            public subject(string name, string teacher)
+            {
+                Name = name;
+                Teacher = teacher;
+            }
+        }
+
+        public struct grade
+        {
+            public int Value;
+
+            public grade(int value)
+            {
+                Value = value;
+            }
+        }
+    }
+
+public class Program
+{
+    private const string Grades = "Grades.txt";
+
+    public static void Main()
+    {
+        int option;
+
+        do
+        {
+            Console.WriteLine("Bienvenido al sistema de calificaciones");
+            Console.WriteLine("1.Ingresar nota");
+            Console.WriteLine("2.Ver notas");
+            Console.WriteLine("3. Actualizar notas");
+            Console.WriteLine("4. Eliminar notas");
+            Console.WriteLine("5.Salir");
+            option = int.Parse(Console.ReadLine());
+            Console.Clear();
+
+            switch (option)
+            {
+                case 1:
+                    AddGrade();
+                    break;
+                case 2:
+                    ShowGrades();
+                    break;
+                case 3:
+                    UpdateGrade();
+                    break;
+                case 4:
+                    DeleteGrade();
+                    break;
+                case 5:
+                    Console.WriteLine("Gracias por usar el sistema de calificaciones");
+                    break;
+                default:
+                    Console.WriteLine("Opción no válida");
+                    break;
+            }
+
+        } while (option != 5);
+    }
+
+
+    public static void AddGrade()
+    {
+        Console.WriteLine("El estudiante ya existe?");
+        Console.WriteLine("1. Si");
+        Console.WriteLine("2. No");
+        int tempop = int.Parse(Console.ReadLine());
+        Console.Clear();
+
+        if (tempop == 1)
+        {
+            if (!File.Exists(Grades))
+            {
+                Console.WriteLine("No hay datos ingresados");
+                return;
+            }
+
+            
+            List<(string Name, int Cif, int Age, string Subject, string Teacher, int GradeValue)> studentRecords =
+                new List<(string, int, int, string, string, int)>();
+
+            bool studentFound = false;
+            int tempcif;
+            string updatedName = "";
+            int updatedAge = 0;
+
+            Console.WriteLine("Ingrese el CIF del estudiante");
+            tempcif = int.Parse(Console.ReadLine());
+
+            
+            try
+            {
+                using (BinaryReader reader = new BinaryReader(File.Open(Grades, FileMode.Open, FileAccess.Read)))
+                {
+                    while (reader.BaseStream.Position != reader.BaseStream.Length)
+                    {
+                        
+                        string name = reader.ReadString();
+                        int cif = reader.ReadInt32();
+                        int age = reader.ReadInt32();
+                        string subjectName = reader.ReadString();
+                        string teacher = reader.ReadString();
+                        int gradeValue = reader.ReadInt32();
+
+                        
+                        if (cif == tempcif)
+                        {
+                            studentFound = true;
+                            Console.WriteLine($"Estudiante encontrado: {name} con CIF {cif}");
+
+                            
+                            Console.WriteLine("Ingrese el nombre de la materia");
+                            string newSubject = Console.ReadLine();
+                            Console.WriteLine("Ingrese el nombre del profesor");
+                            string newTeacher = Console.ReadLine();
+                            Console.WriteLine("Ingrese la nueva nota");
+                            int newValue = int.Parse(Console.ReadLine());
+
+                            
+                            studentRecords.Add((name, cif, age, newSubject, newTeacher, newValue));
+                        }
+                        else
+                        {
+                            
+                            studentRecords.Add((name, cif, age, subjectName, teacher, gradeValue));
+                        }
+                    }
+                }
+
+               
+                if (studentFound)
+                {
+                    
+                    using (BinaryWriter writer = new BinaryWriter(File.Open(Grades, FileMode.Create)))
+                    {
+                        foreach (var record in studentRecords)
+                        {
+                            writer.Write(record.Name);
+                            writer.Write(record.Cif);
+                            writer.Write(record.Age);
+                            writer.Write(record.Subject);
+                            writer.Write(record.Teacher);
+                            writer.Write(record.GradeValue);
+                        }
+                    }
+
+                    Console.WriteLine("Datos del estudiante actualizados correctamente.");
+                }
+                else
+                {
+                    Console.WriteLine("Estudiante no encontrado.");
+                }
+            }
+            catch (IOException ex)
+            {
+                Console.WriteLine($"Error al acceder al archivo: {ex.Message}");
+            }
+        }
+        else if (tempop == 2)
+        {
+            
+            Console.WriteLine("Ingrese el nombre del estudiante");
+            string name = Console.ReadLine();
+            Console.WriteLine("Ingrese el CIF del estudiante");
+            int cif = int.Parse(Console.ReadLine());
+            Console.WriteLine("Ingrese la edad del estudiante");
+            int age = int.Parse(Console.ReadLine());
+
+            Console.WriteLine("Ingrese el nombre de la materia");
+            string subject = Console.ReadLine();
+            Console.WriteLine("Ingrese el nombre del profesor");
+            string teacher = Console.ReadLine();
+            Console.WriteLine("Ingrese la nota");
+            int value = int.Parse(Console.ReadLine());
+
+            using (BinaryWriter writer = new BinaryWriter(File.Open(Grades, FileMode.Append)))
+            {
+                writer.Write(name);
+                writer.Write(cif);
+                writer.Write(age);
+                writer.Write(subject);
+                writer.Write(teacher);
+                writer.Write(value);
+            }
+
+            Console.WriteLine("Estudiante y nota añadidos correctamente.");
+        }
+    }
+
+    public static void ShowGrades()
+    {
+        if (!File.Exists(Grades))
+        {
+            Console.WriteLine("No hay notas ingresadas");
+            return;
+        }
+
+        using (BinaryReader reader = new BinaryReader(File.Open(Grades, FileMode.Open)))
+        {
+            try
+            {
+                while (true)
+                {
+                    student student = new student()
+                    {
+                        Name = reader.ReadString(),
+                        Cif = reader.ReadInt32(),
+                        Age = reader.ReadInt32()
+                    };
+
+                    student.subject subject = new student.subject()
+                    {
+                        Name = reader.ReadString(),
+                        Teacher = reader.ReadString()
+                    };
+
+                    student.grade grade = new student.grade()
+                    {
+                        Value = reader.ReadInt32()
+                    };
+
+                    Console.WriteLine("Nombre: " + student.Name);
+                    Console.WriteLine("CIF: " + student.Cif);
+                    Console.WriteLine("Edad: " + student.Age);
+                    Console.WriteLine("Materias: " + subject.Name);
+                    Console.WriteLine("Profesores: " + subject.Teacher);
+                    Console.WriteLine("Notas: " + grade.Value);
+                    Console.WriteLine();
+                    
+                    
+
+                }
+                
+            }
+            catch (EndOfStreamException)
+            {
+            }
+        }
+    }
+
+    public static void UpdateGrade()
+    {
+        if (!File.Exists(Grades))
+        {
+            Console.WriteLine("No hay datos ingresadas");
+            return;
+        }
+
+        Console.WriteLine("Ingrese el CIF del estudiante");
+        int tempcif = int.Parse(Console.ReadLine());
+
+        Console.WriteLine("Ingrese el nombre de la materia que desea cambiar");
+        string tempname = Console.ReadLine();
+
+        using (BinaryReader reader = new BinaryReader(File.Open(Grades, FileMode.Open)))
+        {
+            using (BinaryWriter writer = new BinaryWriter(File.Open("temp.txt", FileMode.Create)))
+            {
+                try
+                {
+                    while (true)
+                    {
+                        student student = new student()
+                        {
+                            Name = reader.ReadString(),
+                            Cif = reader.ReadInt32(),
+                            Age = reader.ReadInt32()
+                        };
+
+                        student.subject subject = new student.subject()
+                        {
+                            Name = reader.ReadString(),
+                            Teacher = reader.ReadString()
+                        };
+
+                        student.grade grade = new student.grade()
+                        {
+                            Value = reader.ReadInt32()
+                        };
+
+                        if (student.Cif == tempcif && subject.Name == tempname)
+                        {
+                            Console.WriteLine("Ingrese la nueva nota");
+                            int value = int.Parse(Console.ReadLine());
+
+                            writer.Write(student.Name);
+                            writer.Write(student.Cif);
+                            writer.Write(student.Age);
+                            writer.Write(subject.Name);
+                            writer.Write(subject.Teacher);
+                            writer.Write(value);
+                        }
+                        else
+                        {
+                            writer.Write(student.Name);
+                            writer.Write(student.Cif);
+                            writer.Write(student.Age);
+                            writer.Write(subject.Name);
+                            writer.Write(subject.Teacher);
+                            writer.Write(grade.Value);
+                        }
+                    }
+                }
+                catch (EndOfStreamException)
+                {
+                }
+            }
+        }
+
+        File.Delete(Grades);
+        File.Move("temp.txt", Grades);
+        Console.WriteLine("Nota actualizada");
+    }
+
+    public static void DeleteGrade()
+    {
+        Console.WriteLine("Ingrese el CIF del estudiante");
+        int tempcif = int.Parse(Console.ReadLine());
+
+        Console.WriteLine("Ingrese el nombre de la materia de la nota que desea eliminar");
+        string tempSubject = Console.ReadLine();
+
+        if (!File.Exists(Grades))
+        {
+            Console.WriteLine("No hay datos ingresados");
+            return;
+        }
+
+        using (BinaryReader reader = new BinaryReader(File.Open(Grades, FileMode.Open)))
+        {
+            using (BinaryWriter writer = new BinaryWriter(File.Open("temp.txt", FileMode.Create)))
+            {
+                try
+                {
+                    while (true)
+                    {
+                        student student = new student()
+                        {
+                            Name = reader.ReadString(),
+                            Cif = reader.ReadInt32(),
+                            Age = reader.ReadInt32()
+                        };
+
+                        student.subject subject = new student.subject()
+                        {
+                            Name = reader.ReadString(),
+                            Teacher = reader.ReadString()
+                        };
+
+                        student.grade grade = new student.grade()
+                        {
+                            Value = reader.ReadInt32()
+                        };
+
+                        if (student.Cif == tempcif && subject.Name == tempSubject)
+                        {
+                            continue;
+                        }
+
+                        writer.Write(student.Name);
+                        writer.Write(student.Cif);
+                        writer.Write(student.Age);
+                        writer.Write(subject.Name);
+                        writer.Write(subject.Teacher);
+                        writer.Write(grade.Value);
+                    }
+                }
+                catch (EndOfStreamException)
+                {
+                }
+            }
+        }
+
+        File.Delete(Grades);
+        File.Move("temp.txt", Grades);
+        Console.WriteLine("Nota eliminada");
+    }
+}
+
