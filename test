@@ -1,0 +1,384 @@
+using System;
+using System.Collections.Generic;
+
+namespace Ejercicios_Listas
+{
+    public class Ejercicios_1_2_3
+    {
+        // Método principal que se ejecuta al iniciar el programa
+        public static void Main(string[] args)
+        {
+            bool salir = false; // Variable para controlar el bucle del menú principal
+            while (!salir) // Bucle que se ejecuta hasta que el usuario decida salir
+            {
+                // Mostrar el menú principal
+                Console.WriteLine("Menú Principal:");
+                Console.WriteLine("1. Gestión de Inventario");
+                Console.WriteLine("2. Gestión de Cuenta Bancaria");
+                Console.WriteLine("3. Diccionario Inglés-Español");
+                Console.WriteLine("4. Salir");
+                Console.Write("Seleccione una opción: ");
+                int opcion = int.Parse(Console.ReadLine()); // Leer la opción seleccionada por el usuario
+
+                // Ejecutar la acción correspondiente a la opción seleccionada
+                switch (opcion)
+                {
+                    case 1:
+                        GestionInventario(); // Llamar al método de gestión de inventario
+                        break;
+                    case 2:
+                        GestionCuentaBancaria(); // Llamar al método de gestión de cuenta bancaria
+                        break;
+                    case 3:
+                        List<Tuple<string, string>> diccionario = CrearDiccionario(); // Crear el diccionario
+                        Traducir(diccionario); // Llamar al método de traducción
+                        break;
+                    case 4:
+                        salir = true; // Salir del bucle
+                        break;
+                    default:
+                        Console.WriteLine("Opción no válida. Intente de nuevo."); // Mensaje de error para opción no válida
+                        break;
+                }
+
+                Console.ReadKey(); // Esperar a que el usuario presione una tecla
+                Console.Clear(); // Limpiar la consola
+            }
+        }
+
+        // Método para gestionar el inventario
+        public static void GestionInventario()
+        {
+            List<Producto> inventario = new List<Producto>(); // Crear una lista para almacenar los productos
+            bool salir = false; // Variable para controlar el bucle del menú de inventario
+            while (!salir) // Bucle que se ejecuta hasta que el usuario decida salir
+            {
+                // Mostrar el menú de inventario
+                Console.WriteLine("Menú de Inventario:");
+                Console.WriteLine("1. Agregar producto");
+                Console.WriteLine("2. Eliminar producto");
+                Console.WriteLine("3. Modificar producto");
+                Console.WriteLine("4. Consultar producto");
+                Console.WriteLine("5. Mostrar todos los productos");
+                Console.WriteLine("6. Salir");
+                Console.Write("Seleccione una opción: ");
+                int opcion = int.Parse(Console.ReadLine()); // Leer la opción seleccionada por el usuario
+
+                // Ejecutar la acción correspondiente a la opción seleccionada
+                switch (opcion)
+                {
+                    case 1:
+                        AgregarProducto(inventario); // Llamar al método para agregar un producto
+                        break;
+                    case 2:
+                        EliminarProducto(inventario); // Llamar al método para eliminar un producto
+                        break;
+                    case 3:
+                        ModificarProducto(inventario); // Llamar al método para modificar un producto
+                        break;
+                    case 4:
+                        ConsultarProducto(inventario); // Llamar al método para consultar un producto
+                        break;
+                    case 5:
+                        MostrarProductos(inventario); // Llamar al método para mostrar todos los productos
+                        break;
+                    case 6:
+                        salir = true; // Salir del bucle
+                        break;
+                    default:
+                        Console.WriteLine("Opción no válida. Intente de nuevo."); // Mensaje de error para opción no válida
+                        break;
+                }
+
+                Console.ReadKey(); // Esperar a que el usuario presione una tecla
+                Console.Clear(); // Limpiar la consola
+            }
+        }
+
+        // Método para agregar un producto al inventario
+        public static void AgregarProducto(List<Producto> inventario)
+        {
+            // Solicitar los datos del producto al usuario
+            Console.Write("Ingrese el código del producto: ");
+            string codigo = Console.ReadLine();
+            Console.Write("Ingrese el nombre del producto: ");
+            string nombre = Console.ReadLine();
+            Console.Write("Ingrese la cantidad del producto: ");
+            int cantidad = int.Parse(Console.ReadLine());
+            Console.Write("Ingrese el precio del producto: ");
+            decimal precio = decimal.Parse(Console.ReadLine());
+
+            // Crear un nuevo objeto Producto con los datos ingresados
+            Producto producto = new Producto()
+            {
+                Codigo = codigo,
+                Nombre = nombre,
+                Cantidad = cantidad,
+                Precio = precio
+            };
+
+            // Agregar el producto a la lista de inventario
+            inventario.Add(producto);
+            Console.WriteLine("Producto agregado correctamente.");
+
+            Console.ReadKey(); // Esperar a que el usuario presione una tecla
+            Console.Clear(); // Limpiar la consola
+        }
+
+        // Método para eliminar un producto del inventario
+        public static void EliminarProducto(List<Producto> inventario)
+        {
+            // Solicitar el código del producto a eliminar
+            Console.Write("Ingrese el código del producto a eliminar: ");
+            string codigo = Console.ReadLine();
+
+            // Buscar el producto en la lista de inventario
+            Producto producto = inventario.Find(p => p.Codigo == codigo);
+
+            // Si el producto se encuentra, eliminarlo de la lista
+            if (producto != null)
+            {
+                inventario.Remove(producto);
+                Console.WriteLine("Producto eliminado correctamente.");
+            }
+            else
+            {
+                Console.WriteLine("Producto no encontrado."); // Mensaje de error si el producto no se encuentra
+            }
+
+            Console.ReadKey(); // Esperar a que el usuario presione una tecla
+            Console.Clear(); // Limpiar la consola
+        }
+
+        // Método para modificar un producto del inventario
+        public static void ModificarProducto(List<Producto> inventario)
+        {
+            // Solicitar el código del producto a modificar
+            Console.Write("Ingrese el código del producto a modificar: ");
+            string codigo = Console.ReadLine();
+
+            // Buscar el producto en la lista de inventario
+            Producto producto = inventario.Find(p => p.Codigo == codigo);
+
+            // Si el producto se encuentra, solicitar los nuevos datos y actualizarlos
+            if (producto != null)
+            {
+                Console.Write("Ingrese el nuevo nombre del producto: ");
+                string nombre = Console.ReadLine();
+                Console.Write("Ingrese la nueva cantidad del producto: ");
+                int cantidad = int.Parse(Console.ReadLine());
+                Console.Write("Ingrese el nuevo precio del producto: ");
+                decimal precio = decimal.Parse(Console.ReadLine());
+
+                producto.Nombre = nombre;
+                producto.Cantidad = cantidad;
+                producto.Precio = precio;
+
+                Console.WriteLine("Producto modificado correctamente.");
+            }
+            else
+            {
+                Console.WriteLine("Producto no encontrado."); // Mensaje de error si el producto no se encuentra
+            }
+
+            Console.ReadKey(); // Esperar a que el usuario presione una tecla
+            Console.Clear(); // Limpiar la consola
+        }
+
+        // Método para consultar un producto del inventario
+        public static void ConsultarProducto(List<Producto> inventario)
+        {
+            // Solicitar el código del producto a consultar
+            Console.Write("Ingrese el código del producto a consultar: ");
+            string codigo = Console.ReadLine();
+
+            // Buscar el producto en la lista de inventario
+            Producto producto = inventario.Find(p => p.Codigo == codigo);
+
+            // Si el producto se encuentra, mostrar sus datos
+            if (producto != null)
+            {
+                Console.WriteLine($"Código: {producto.Codigo}");
+                Console.WriteLine($"Nombre: {producto.Nombre}");
+                Console.WriteLine($"Cantidad: {producto.Cantidad}");
+                Console.WriteLine($"Precio: {producto.Precio}");
+            }
+            else
+            {
+                Console.WriteLine("Producto no encontrado."); // Mensaje de error si el producto no se encuentra
+            }
+
+            Console.ReadKey(); // Esperar a que el usuario presione una tecla
+            Console.Clear(); // Limpiar la consola
+        }
+
+        // Método para mostrar todos los productos del inventario
+        public static void MostrarProductos(List<Producto> inventario)
+        {
+            // Si hay productos en el inventario, mostrarlos
+            if (inventario.Count > 0)
+            {
+                foreach (Producto producto in inventario)
+                {
+                    Console.WriteLine($"Código: {producto.Codigo}");
+                    Console.WriteLine($"Nombre: {producto.Nombre}");
+                    Console.WriteLine($"Cantidad: {producto.Cantidad}");
+                    Console.WriteLine($"Precio: {producto.Precio}");
+                    Console.WriteLine("-------------------------");
+                }
+            }
+            else
+            {
+                Console.WriteLine("No existen productos."); // Mensaje si no hay productos en el inventario
+            }
+
+            Console.ReadKey(); // Esperar a que el usuario presione una tecla
+            Console.Clear(); // Limpiar la consola
+        }
+
+        // Método para gestionar la cuenta bancaria
+        public static void GestionCuentaBancaria()
+        {
+            decimal saldo = 0; // Inicializar el saldo en 0
+            bool salir = false; // Variable para controlar el bucle del menú de cuenta bancaria
+            while (!salir) // Bucle que se ejecuta hasta que el usuario decida salir
+            {
+                // Mostrar el menú de cuenta bancaria
+                Console.WriteLine("Menú de Cuenta Bancaria:");
+                Console.WriteLine("1. Consultar saldo");
+                Console.WriteLine("2. Depositar dinero");
+                Console.WriteLine("3. Retirar dinero");
+                Console.WriteLine("4. Salir");
+                Console.Write("Seleccione una opción: ");
+                int opcion = int.Parse(Console.ReadLine()); // Leer la opción seleccionada por el usuario
+
+                // Ejecutar la acción correspondiente a la opción seleccionada
+                switch (opcion)
+                {
+                    case 1:
+                        ConsultarSaldo(saldo); // Llamar al método para consultar el saldo
+                        break;
+                    case 2:
+                        DepositarDinero(ref saldo); // Llamar al método para depositar dinero
+                        break;
+                    case 3:
+                        RetirarDinero(ref saldo); // Llamar al método para retirar dinero
+                        break;
+                    case 4:
+                        salir = true; // Salir del bucle
+                        break;
+                    default:
+                        Console.WriteLine("Opción no válida. Intente de nuevo."); // Mensaje de error para opción no válida
+                        break;
+                }
+
+                Console.ReadKey(); // Esperar a que el usuario presione una tecla
+                Console.Clear(); // Limpiar la consola
+            }
+        }
+
+        // Método para consultar el saldo de la cuenta bancaria
+        public static void ConsultarSaldo(decimal saldo)
+        {
+            Console.WriteLine($"Saldo actual: {saldo}"); // Mostrar el saldo actual
+
+            Console.ReadKey(); // Esperar a que el usuario presione una tecla
+            Console.Clear(); // Limpiar la consola
+        }
+
+        // Método para depositar dinero en la cuenta bancaria
+        public static void DepositarDinero(ref decimal saldo)
+        {
+            // Solicitar la cantidad a depositar
+            Console.Write("Ingrese la cantidad a depositar: ");
+            decimal deposito = decimal.Parse(Console.ReadLine());
+            saldo += deposito; // Sumar el depósito al saldo
+            Console.WriteLine("Depósito realizado.");
+
+            Console.ReadKey(); // Esperar a que el usuario presione una tecla
+            Console.Clear(); // Limpiar la consola
+        }
+
+        // Método para retirar dinero de la cuenta bancaria
+        public static void RetirarDinero(ref decimal saldo)
+        {
+            // Solicitar la cantidad a retirar
+            Console.Write("Ingrese la cantidad a retirar: ");
+            decimal retiro = decimal.Parse(Console.ReadLine());
+            if (retiro <= saldo) // Verificar si hay suficiente saldo
+            {
+                saldo -= retiro; // Restar el retiro del saldo
+                Console.WriteLine("Retiro realizado.");
+            }
+            else
+            {
+                Console.WriteLine("Saldo insuficiente."); // Mensaje de error si no hay suficiente saldo
+            }
+
+            Console.ReadKey(); // Esperar a que el usuario presione una tecla
+            Console.Clear(); // Limpiar la consola
+        }
+
+        // Método para crear un diccionario inglés-español
+        public static List<Tuple<string, string>> CrearDiccionario()
+        {
+            List<Tuple<string, string>> diccionario = new List<Tuple<string, string>>(); // Crear una lista de tuplas para almacenar las palabras
+            Console.ReadKey(); // Esperar a que el usuario presione una tecla
+            Console.Clear(); // Limpiar la consola
+
+            // Solicitar al usuario que ingrese 5 pares de palabras
+            for (int i = 0; i < 5; i++)
+            {
+                Console.Write($"Ingrese la palabra {i + 1} en inglés: ");
+                string pal1 = Console.ReadLine();
+                Console.Write($"Ingrese la palabra {i + 1} en español: ");
+                string pal2 = Console.ReadLine();
+                diccionario.Add(new Tuple<string, string>(pal1, pal2)); // Agregar las palabras al diccionario
+            }
+            return diccionario; // Devolver el diccionario creado
+        }
+
+        // Método para traducir palabras usando el diccionario
+        public static void Traducir(List<Tuple<string, string>> diccionario)
+        {
+            // Solicitar la palabra a traducir
+            Console.Write("Ingrese la palabra a traducir: ");
+            string clave = Console.ReadLine();
+            bool encontrado = false; // Variable para controlar si se encuentra la palabra
+
+            // Buscar la palabra en el diccionario
+            foreach (var duo in diccionario)
+            {
+                if (duo.Item1.Equals(clave, StringComparison.OrdinalIgnoreCase)) // Comparar con la palabra en inglés
+                {
+                    Console.WriteLine($"La traducción de la palabra {clave} es: {duo.Item2}."); // Mostrar la traducción
+                    encontrado = true;
+                    break;
+                }
+                else if (duo.Item2.Equals(clave, StringComparison.OrdinalIgnoreCase)) // Comparar con la palabra en español
+                {
+                    Console.WriteLine($"La traducción de la palabra {clave} es: {duo.Item1}."); // Mostrar la traducción
+                    encontrado = true;
+                    break;
+                }
+            }
+
+            if (!encontrado) // Si no se encuentra la palabra, mostrar un mensaje de error
+            {
+                Console.WriteLine($"La palabra {clave} no se encontró.");
+            }
+
+            Console.ReadKey(); // Esperar a que el usuario presione una tecla
+            Console.Clear(); // Limpiar la consola
+        }
+    }
+
+    // Clase para representar un producto
+    public class Producto
+    {
+        public string Codigo; // Código del producto
+        public string Nombre; // Nombre del producto
+        public int Cantidad; // Cantidad del producto
+        public decimal Precio; // Precio del producto
+    }
+}
